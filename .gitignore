@@ -1,0 +1,48 @@
+# Build Folders
+bin/
+obj/
+
+# Visual Studio files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider files
+.idea/
+*.sln.iml
+
+# ASP.NET temporary files
+*.vs/
+.vscode/
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Publish output
+publish/
+wwwroot/lib/
+
+# User-specific files
+*.log
+*.vspscc
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# ASP.NET Core
+appsettings.*.json
+
+# JetBrains Rider
+.idea/
+*.sln.iml
