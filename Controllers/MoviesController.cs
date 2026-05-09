@@ -58,6 +58,60 @@ public class MoviesController : Controller
 
     public IActionResult Add()
     {
-        return View();
+        return View(new Movie());
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Add(Movie model)
+    {
+        var yearInput = Request.Form["Year"].ToString().Trim();
+
+        if (string.IsNullOrWhiteSpace(model.Title))
+        {
+            ModelState.AddModelError(nameof(model.Title), "Title is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(yearInput))
+        {
+            ModelState.AddModelError(nameof(model.Year), "Year is required.");
+        }
+        else if (!int.TryParse(yearInput, out var yearValue) || yearInput.Length != 4)
+        {
+            ModelState.AddModelError(nameof(model.Year), "Year must be a four-digit number.");
+        }
+        else
+        {
+            model.Year = yearValue;
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        try
+        {
+            var payload = new { Title = model.Title.Trim(), Year = model.Year };
+            var response = await _httpClientFactory
+                .CreateClient()
+                .PostAsJsonAsync("http://localhost:5000/api/movie", payload);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var errorText = await response.Content.ReadAsStringAsync();
+            ModelState.AddModelError(string.Empty, !string.IsNullOrWhiteSpace(errorText)
+                ? errorText
+                : "Unable to add movie. Please try again.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unable to add movie.");
+            ModelState.AddModelError(string.Empty, "Unable to add movie. Please try again later.");
+        }
+
+        return View(model);
     }
 }

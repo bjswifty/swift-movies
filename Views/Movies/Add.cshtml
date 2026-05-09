@@ -1,3 +1,5 @@
+@model swift_movies.Models.Movie
+
 @{
     ViewData["Title"] = "Add Movie";
 }
@@ -5,16 +7,54 @@
 <h1>Add Movie</h1>
 
 <div class="card p-4" style="max-width: 500px;">
-    <div class="mb-3">
-        <label for="Title" class="form-label">Title</label>
-        <input id="Title" name="Title" type="text" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label for="Year" class="form-label">Year</label>
-        <input id="Year" name="Year" type="text" class="form-control" />
-    </div>
-    <div class="d-flex gap-2">
-        <button type="button" class="btn btn-primary">Add Movie</button>
-        <a class="btn btn-secondary" asp-controller="Movies" asp-action="Index">Back</a>
-    </div>
+    <form asp-action="Add" method="post" id="addMovieForm" novalidate>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="display:@(ViewData.ModelState.IsValid ? "none" : "block")"></div>
+
+        <div class="mb-3">
+            <label for="Title" class="form-label">Title</label>
+            <input id="Title" name="Title" value="@Model.Title" type="text" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label for="Year" class="form-label">Year</label>
+            <input id="Year" name="Year" value="@(Model.Year != 0 ? Model.Year.ToString() : string.Empty)" type="text" class="form-control" maxlength="4" />
+            <div class="form-text">Enter a four-digit year (e.g. 2026).</div>
+            <span asp-validation-for="Year" class="text-danger"></span>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Add Movie</button>
+            <a class="btn btn-secondary" asp-controller="Movies" asp-action="Index">Back</a>
+        </div>
+    </form>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.getElementById('addMovieForm');
+            var titleInput = document.getElementById('Title');
+            var yearInput = document.getElementById('Year');
+
+            form.addEventListener('submit', function (event) {
+                var titleValue = titleInput.value.trim();
+                var yearValue = yearInput.value.trim();
+                var errors = [];
+
+                if (!titleValue) {
+                    errors.push('Title is required and cannot be blank.');
+                }
+
+                if (!yearValue) {
+                    errors.push('Year is required.');
+                } else if (!/^\d{4}$/.test(yearValue)) {
+                    errors.push('Year must be a four-digit number.');
+                }
+
+                if (errors.length > 0) {
+                    event.preventDefault();
+                    alert(errors.join('\n'));
+                }
+            });
+        });
+    </script>
+}
