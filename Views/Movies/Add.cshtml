@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Add Movie";
+}
+
+<h1>Add Movie</h1>
+
+<div class="card p-4" style="max-width: 500px;">
+    <div class="mb-3">
+        <label for="Title" class="form-label">Title</label>
+        <input id="Title" name="Title" type="text" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="Year" class="form-label">Year</label>
+        <input id="Year" name="Year" type="text" class="form-control" />
+    </div>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-primary">Add Movie</button>
+        <a class="btn btn-secondary" asp-controller="Movies" asp-action="Index">Back</a>
+    </div>
+</div>

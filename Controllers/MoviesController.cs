@@ -55,4 +55,9 @@ public class MoviesController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    public IActionResult Add()
+    {
+        return View();
+    }
 }
