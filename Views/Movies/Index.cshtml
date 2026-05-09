@@ -17,6 +17,7 @@ else
             <tr>
                 <th>Title</th>
                 <th>Year</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -25,8 +26,34 @@ else
                 <tr>
                     <td>@movie.Title</td>
                     <td>@movie.Year</td>
+                    <td>
+                        <form asp-controller="Movies" asp-action="Delete" method="post" class="delete-movie-form d-inline">
+                            <input type="hidden" name="id" value="@movie.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm delete-movie-button" data-title="@movie.Title">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 }
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.delete-movie-form').forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    var button = form.querySelector('.delete-movie-button');
+                    var movieTitle = button.dataset.title;
+                    var confirmed = window.confirm('Are you sure you want to delete the movie "' + movieTitle + '"?');
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+}
+

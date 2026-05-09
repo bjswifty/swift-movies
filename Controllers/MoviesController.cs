@@ -33,4 +33,26 @@ public class MoviesController : Controller
 
         return View(movies);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            var response = await _httpClientFactory
+                .CreateClient()
+                .DeleteAsync($"http://localhost:5000/api/movie/{id}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Failed to delete movie {MovieId}. StatusCode: {StatusCode}", id, response.StatusCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unable to delete movie {MovieId}.", id);
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
 }
