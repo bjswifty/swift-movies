@@ -27,12 +27,15 @@ else
                     <td>@movie.Title</td>
                     <td>@movie.Year</td>
                     <td>
-                        <form asp-controller="Movies" asp-action="Delete" method="post" class="delete-movie-form d-inline">
-                            <input type="hidden" name="id" value="@movie.Id" />
-                            <button type="submit" class="btn btn-danger btn-sm delete-movie-button" data-title="@movie.Title">
-                                Delete
-                            </button>
-                        </form>
+                        <div class="btn-group" role="group">
+                            <a class="btn btn-secondary btn-sm" asp-controller="Movies" asp-action="Edit" asp-route-id="@movie.Id">Edit</a>
+                            <form asp-controller="Movies" asp-action="Delete" method="post" class="delete-movie-form d-inline">
+                                <input type="hidden" name="id" value="@movie.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm delete-movie-button" data-title="@movie.Title">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             }

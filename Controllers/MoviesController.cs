@@ -114,4 +114,80 @@ public class MoviesController : Controller
 
         return View(model);
     }
+
+    public async Task<IActionResult> Edit(int id)
+    {
+        try
+        {
+            var movie = await _httpClientFactory
+                .CreateClient()
+                .GetFromJsonAsync<Movie>($"http://localhost:5000/api/movie/{id}");
+
+            if (movie == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(movie);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unable to load movie {MovieId} for edit.", id);
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(Movie model)
+    {
+        var yearInput = Request.Form["Year"].ToString().Trim();
+
+        if (string.IsNullOrWhiteSpace(model.Title))
+        {
+            ModelState.AddModelError(nameof(model.Title), "Title is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(yearInput))
+        {
+            ModelState.AddModelError(nameof(model.Year), "Year is required.");
+        }
+        else if (!int.TryParse(yearInput, out var yearValue) || yearInput.Length != 4)
+        {
+            ModelState.AddModelError(nameof(model.Year), "Year must be a four-digit number.");
+        }
+        else
+        {
+            model.Year = yearValue;
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        try
+        {
+            var payload = new { Title = model.Title.Trim(), Year = model.Year };
+            var response = await _httpClientFactory
+                .CreateClient()
+                .PutAsJsonAsync($"http://localhost:5000/api/movie/{model.Id}", payload);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var errorText = await response.Content.ReadAsStringAsync();
+            ModelState.AddModelError(string.Empty, !string.IsNullOrWhiteSpace(errorText)
+                ? errorText
+                : "Unable to update movie. Please try again.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unable to update movie {MovieId}.", model.Id);
+            ModelState.AddModelError(string.Empty, "Unable to save movie changes. Please try again later.");
+        }
+
+        return View(model);
+    }
 }
